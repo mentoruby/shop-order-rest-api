@@ -11,11 +11,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -23,16 +21,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import online.shopping.controller.OrderController;
 import online.shopping.entity.Customer;
 import online.shopping.entity.Order;
 import online.shopping.entity.OrderSummary;
 import online.shopping.entity.Product;
 import online.shopping.service.CustomerRepository;
+import online.shopping.service.OrderSummaryRepository;
 import online.shopping.service.ProductRepository;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ContextConfiguration(classes = {CustomerRepository.class, ProductRepository.class})
+@WebMvcTest(OrderController.class)
 public class OrderTests {
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -44,6 +42,9 @@ public class OrderTests {
 	
 	@MockBean
     private ProductRepository productRepository;
+	
+	@MockBean
+	private OrderSummaryRepository orderSummaryRepository;
 	
 	@Test
 	public void saveOrderSummary() throws Exception {
@@ -64,13 +65,16 @@ public class OrderTests {
 		orderSummary.addOrder(orangeOrder);
 		
 		String testContent = new ObjectMapper().writeValueAsString(orderSummary);
-		logger.info(testContent);
 		
 		mvc.perform(MockMvcRequestBuilders.post("/order/save")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(testContent))
+        .content(testContent)
+		.accept(MediaType.APPLICATION_JSON))
 		.andExpect(MockMvcResultMatchers.status().isOk())
 		.andDo(MockMvcResultHandlers.print())
-        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+		//.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+		//.andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+		;
+		
    }
 }
