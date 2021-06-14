@@ -15,6 +15,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Proxy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Proxy(lazy = false)
 @Table(name = "order_table")
@@ -65,6 +67,7 @@ public class Order {
 		this.product = product;
 	}
 
+	@JsonIgnore
 	public OrderSummary getOrderSummary() {
 		return orderSummary;
 	}

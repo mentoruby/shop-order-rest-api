@@ -15,7 +15,6 @@ import online.shopping.entity.Order;
 import online.shopping.entity.OrderSummary;
 import online.shopping.entity.Product;
 import online.shopping.service.CustomerRepository;
-import online.shopping.service.OrderRepository;
 import online.shopping.service.OrderSummaryRepository;
 import online.shopping.service.ProductRepository;
 
@@ -28,9 +27,6 @@ public class OrderSampleStartupRunner implements CommandLineRunner {
 	
 	@Autowired
 	private ProductRepository productRepository;
-	
-	@Autowired
-	private OrderRepository orderRepository;
 	
 	@Autowired
 	private OrderSummaryRepository orderSummaryRepository;
@@ -54,8 +50,6 @@ public class OrderSampleStartupRunner implements CommandLineRunner {
 		OrderSummary sampleOrderSummary = new OrderSummary(Timestamp.from(ZonedDateTime.now().toInstant()), sampleCustomer);
 		Order sampleOrder1 = new Order(sampleProduct1, 10);
 		Order sampleOrder2 = new Order(sampleProduct2, 20);
-		sampleOrder1.setOrderSummary(sampleOrderSummary);
-		sampleOrder2.setOrderSummary(sampleOrderSummary);
 		sampleOrderSummary.addOrder(sampleOrder1);
 		sampleOrderSummary.addOrder(sampleOrder2);
 		

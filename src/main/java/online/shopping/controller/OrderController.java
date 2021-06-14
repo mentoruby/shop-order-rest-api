@@ -18,15 +18,11 @@ public class OrderController {
 	@Autowired
 	private OrderSummaryRepository orderSummaryRespository;
 	
-	@PostMapping("/order/save") 
+	@PostMapping("/order/save")
 	public OrderSummary saveOrderSummary(@RequestBody OrderSummary orderSummary) {
 		List<Order> orderList = orderSummary.getOrderList();
 		if(orderList == null || orderList.isEmpty()) {
 			throw new NotFoundException("Product Not Found In This Order!");
-		}
-		
-		for(Order order : orderList) {
-			order.setOrderSummary(orderSummary);
 		}
 		
 		BigDecimal originalCost = orderSummary.calculateOriginalCost();

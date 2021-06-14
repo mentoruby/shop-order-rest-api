@@ -89,6 +89,11 @@ public class OrderSummary {
 
 	public void setOrderList(List<Order> orderList) {
 		this.orderList = orderList;
+		if(this.orderList != null) {
+			for(Order order : orderList) {
+				order.setOrderSummary(this);
+			}
+		}
 	}
 
 	public BigDecimal getOriginalCost() {
@@ -119,6 +124,7 @@ public class OrderSummary {
 		if(this.orderList == null) {
 			this.orderList = new ArrayList<>();
 		}
+		order.setOrderSummary(this);
 		this.orderList.add(order);
 	}
 	
