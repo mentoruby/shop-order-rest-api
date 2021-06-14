@@ -1,4 +1,5 @@
 
+DROP TABLE IF EXISTS ORDER_PROMO;
 DROP TABLE IF EXISTS ORDER_TABLE;
 DROP TABLE IF EXISTS ORDER_SUMMARY;
 DROP TABLE IF EXISTS PRODUCT;
@@ -31,5 +32,13 @@ CREATE TABLE ORDER_TABLE (
   order_summary_id INT NOT NULL,
   quantity INT DEFAULT 0,
   FOREIGN KEY (product_id) references PRODUCT(id),
+  FOREIGN KEY (order_summary_id) references ORDER_SUMMARY(id)
+);
+  
+CREATE TABLE ORDER_PROMO (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  promo_name VARCHAR(250) NOT NULL,
+  order_summary_id INT NOT NULL,
+  discount DECIMAL DEFAULT 0,
   FOREIGN KEY (order_summary_id) references ORDER_SUMMARY(id)
 );

@@ -3,7 +3,9 @@ package online.shopping.entity;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -34,6 +36,11 @@ public class OrderSummary {
 	
 	@OneToMany(mappedBy = "orderSummary", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<Order> orderList;
+	
+	// Limitation: Hibernate doesn't allow more than one list used with EAGER fetch type, so use Set instead of List
+	// MultipleBagFetchException: cannot simultaneously fetch multiple bags
+	@OneToMany(mappedBy = "orderSummary", cascade = CascadeType.ALL)
+	private Set<OrderPromo> promoList;
 	
 	@Column
 	private BigDecimal originalCost;
@@ -96,6 +103,19 @@ public class OrderSummary {
 		}
 	}
 
+	public Set<OrderPromo> getPromoList() {
+		return promoList;
+	}
+
+	public void setPromoList(Set<OrderPromo> promoList) {
+		this.promoList = promoList;
+		if(this.promoList != null) {
+			for(OrderPromo promo : promoList) {
+				promo.setOrderSummary(this);
+			}
+		}
+	}
+
 	public BigDecimal getOriginalCost() {
 		return originalCost;
 	}
@@ -128,6 +148,14 @@ public class OrderSummary {
 		this.orderList.add(order);
 	}
 	
+	public void addPromo(OrderPromo promo) {
+		if(this.promoList == null) {
+			this.promoList = new HashSet<>();
+		}
+		promo.setOrderSummary(this);
+		this.promoList.add(promo);
+	}
+	
 	public BigDecimal calculateOriginalCost() {
 		BigDecimal cost = BigDecimal.ZERO;
 		if(this.orderList != null) {
@@ -136,6 +164,16 @@ public class OrderSummary {
 			}
 		}
 		return cost;
+	}
+	
+	public BigDecimal calculateFinalDiscount() {
+		BigDecimal discount = BigDecimal.ZERO;
+		if(this.promoList != null) {
+			for(OrderPromo promo : this.promoList) {
+				discount = discount.add(promo.getDiscount());
+			}
+		}
+		return discount;
 	}
 
 	@Override
@@ -162,6 +200,15 @@ public class OrderSummary {
 		}
 		else {
 			sb.append(", orderList=null");
+		}
+		
+		if(promoList != null && !promoList.isEmpty()) {
+			for(OrderPromo promo : promoList) {
+				sb.append(", promotion=").append(promo.getId()).append("-").append(promo.getPromoName());
+			}
+		}
+		else {
+			sb.append(", promoList=null");
 		}
 		
 		sb.append("]");
