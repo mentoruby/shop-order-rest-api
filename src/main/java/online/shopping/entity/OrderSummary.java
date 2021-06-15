@@ -8,7 +8,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,10 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.hibernate.annotations.Proxy;
-
 @Entity
-@Proxy(lazy = false)
 public class OrderSummary {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +28,13 @@ public class OrderSummary {
     @JoinColumn(name = "customer_id")
 	private Customer customer;
 	
-	@OneToMany(mappedBy = "orderSummary", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "orderSummary", cascade = CascadeType.ALL)
 	private List<Order> orderList;
+	
+	// Limitation: Hibernate doesn't allow more than one list used with EAGER fetch type, so use Set instead of List
+	// MultipleBagFetchException: cannot simultaneously fetch multiple bags
+	@OneToMany(mappedBy = "orderSummary", cascade = CascadeType.ALL)
+	private List<OrderPromo> promoList;
 	
 	@Column
 	private BigDecimal originalCost;
@@ -96,6 +97,19 @@ public class OrderSummary {
 		}
 	}
 
+	public List<OrderPromo> getPromoList() {
+		return promoList;
+	}
+
+	public void setPromoList(List<OrderPromo> promoList) {
+		this.promoList = promoList;
+		if(this.promoList != null) {
+			for(OrderPromo promo : promoList) {
+				promo.setOrderSummary(this);
+			}
+		}
+	}
+
 	public BigDecimal getOriginalCost() {
 		return originalCost;
 	}
@@ -128,6 +142,14 @@ public class OrderSummary {
 		this.orderList.add(order);
 	}
 	
+	public void addPromo(OrderPromo promo) {
+		if(this.promoList == null) {
+			this.promoList = new ArrayList<>();
+		}
+		promo.setOrderSummary(this);
+		this.promoList.add(promo);
+	}
+	
 	public BigDecimal calculateOriginalCost() {
 		BigDecimal cost = BigDecimal.ZERO;
 		if(this.orderList != null) {
@@ -136,6 +158,16 @@ public class OrderSummary {
 			}
 		}
 		return cost;
+	}
+	
+	public BigDecimal calculateFinalDiscount() {
+		BigDecimal discount = BigDecimal.ZERO;
+		if(this.promoList != null) {
+			for(OrderPromo promo : this.promoList) {
+				discount = discount.add(promo.getDiscount());
+			}
+		}
+		return discount;
 	}
 
 	@Override
@@ -162,6 +194,15 @@ public class OrderSummary {
 		}
 		else {
 			sb.append(", orderList=null");
+		}
+		
+		if(promoList != null && !promoList.isEmpty()) {
+			for(OrderPromo promo : promoList) {
+				sb.append(", promo_id=").append(promo.getId());
+			}
+		}
+		else {
+			sb.append(", promoList=null");
 		}
 		
 		sb.append("]");
