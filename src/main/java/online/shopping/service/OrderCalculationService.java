@@ -20,7 +20,7 @@ public class OrderCalculationService {
 		promoServices.add(new BuyThreeForTwoPromoService("Orange"));
 	}
 	
-	protected void updateCostAndDiscount(OrderSummary orderSummary) {
+	public void updateCostAndDiscount(OrderSummary orderSummary) {
 		List<Order> orderList = orderSummary.getOrderList();
 		
 		BigDecimal originalCost = orderSummary.calculateOriginalCost();

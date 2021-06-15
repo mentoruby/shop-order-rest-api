@@ -44,7 +44,7 @@ public class PromoTests {
 		
 		String testContent = new ObjectMapper().writeValueAsString(orderSummary);
 		
-		mvc.perform(MockMvcRequestBuilders.post("/order/save")
+		mvc.perform(MockMvcRequestBuilders.post("/order/promo/save")
         .contentType(MediaType.APPLICATION_JSON)
         .content(testContent)
 		.accept(MediaType.APPLICATION_JSON))
@@ -74,7 +74,7 @@ public class PromoTests {
 		
 		String testContent = new ObjectMapper().writeValueAsString(orderSummary);
 		
-		mvc.perform(MockMvcRequestBuilders.post("/order/save")
+		mvc.perform(MockMvcRequestBuilders.post("/order/promo/save")
         .contentType(MediaType.APPLICATION_JSON)
         .content(testContent)
 		.accept(MediaType.APPLICATION_JSON))
@@ -108,7 +108,7 @@ public class PromoTests {
 		
 		String testContent = new ObjectMapper().writeValueAsString(orderSummary);
 		
-		mvc.perform(MockMvcRequestBuilders.post("/order/save")
+		mvc.perform(MockMvcRequestBuilders.post("/order/promo/save")
         .contentType(MediaType.APPLICATION_JSON)
         .content(testContent)
 		.accept(MediaType.APPLICATION_JSON))

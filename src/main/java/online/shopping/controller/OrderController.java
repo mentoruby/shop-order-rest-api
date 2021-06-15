@@ -22,7 +22,19 @@ public class OrderController {
 	private OrderCalculationService orderCalculationService;
 	
 	@PostMapping("/order/save")
-	public OrderSummary saveOrderSummary(@RequestBody OrderSummary orderSummary) {
+	public OrderSummary saveOrders(@RequestBody OrderSummary orderSummary) {
+		List<Order> orderList = orderSummary.getOrderList();
+		if(orderList == null || orderList.isEmpty()) {
+			throw new NotFoundException("Product Not Found In This Order!");
+		}
+		
+		orderCalculationService.updateCostAndDiscount(orderSummary);
+		
+		return this.orderSummaryRespository.save(orderSummary);
+	}
+	
+	@PostMapping("/order/promo/save")
+	public OrderSummary saveOrdersWithPromotion(@RequestBody OrderSummary orderSummary) {
 		List<Order> orderList = orderSummary.getOrderList();
 		if(orderList == null || orderList.isEmpty()) {
 			throw new NotFoundException("Product Not Found In This Order!");
