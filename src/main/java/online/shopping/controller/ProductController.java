@@ -26,7 +26,7 @@ public class ProductController {
 	
 	@RequestMapping("/product/{id}")
 	public Product getProductById(@PathVariable("id") Long id) {
-		return this.productRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Product [ID:%d] Not Found", id)));
+		return this.productRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Product Not Found [ID:%d]", id)));
 	}
 	
 	@PostMapping("/product/save") 

@@ -8,6 +8,7 @@ import java.time.ZonedDateTime;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,7 +36,7 @@ public class OrderTests {
     private MockMvc mvc;
 	
 	@Test
-	public void testNoOrder() throws Exception {
+	public void saveNoOrder() throws Exception {
 		
 		Customer customer = new Customer(1L, "Customer A");
 		
@@ -56,7 +57,7 @@ public class OrderTests {
 	}
 	
 	@Test
-	public void testSingleOrder() throws Exception {
+	public void saveSingleOrder() throws Exception {
 		
 		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25));
 		Customer customer = new Customer(1L, "Customer A");
@@ -83,7 +84,7 @@ public class OrderTests {
 	}
 	
 	@Test
-	public void testMultiOrders() throws Exception {
+	public void saveMultiOrders() throws Exception {
 		
 		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.6));
 		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25));
@@ -110,5 +111,44 @@ public class OrderTests {
 		.andExpect(MockMvcResultMatchers.jsonPath("$.finalDiscount").value(0))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.finalCost").value(11))
 		;
-   }
+	}
+    
+    @Test
+    public void getAllOrders() throws Exception {
+    	mvc.perform(MockMvcRequestBuilders.get("/orders")
+    	.accept(MediaType.APPLICATION_JSON))
+    	.andExpect(MockMvcResultMatchers.status().isOk())
+    	.andDo(MockMvcResultHandlers.print())
+    	.andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
+    	.andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(Matchers.greaterThan(0)))
+    	.andExpect(MockMvcResultMatchers.jsonPath("$[*].id").isNotEmpty())
+    	.andExpect(MockMvcResultMatchers.jsonPath("$[*].customer.id").isNotEmpty())
+    	.andExpect(MockMvcResultMatchers.jsonPath("$[*].orderList[*].id").isNotEmpty())
+    	;
+    }
+    
+    @Test
+    public void getSingleOrder() throws Exception {
+    	mvc.perform(MockMvcRequestBuilders.get("/order/{id}", 1)
+    	.accept(MediaType.APPLICATION_JSON))
+    	.andExpect(MockMvcResultMatchers.status().isOk())
+    	.andDo(MockMvcResultHandlers.print())
+    	.andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+    	.andExpect(MockMvcResultMatchers.jsonPath("$.customer.id").isNotEmpty())
+    	.andExpect(MockMvcResultMatchers.jsonPath("$.orderList[*].id").isNotEmpty())
+    	;
+    }
+    
+    @Test
+    public void getNotExistOrder() throws Exception {
+    	mvc.perform(MockMvcRequestBuilders.get("/order/{id}", 100L)
+    	.accept(MediaType.APPLICATION_JSON))
+    	.andExpect(MockMvcResultMatchers.status().isBadRequest())
+    	.andDo(MockMvcResultHandlers.print())
+		.andExpect(mvcResult -> {
+			assertTrue(mvcResult.getResolvedException() instanceof NotFoundException);
+			assertTrue(mvcResult.getResolvedException().getMessage().startsWith("Order Not Found"));
+		});
+    	;
+    }
 }

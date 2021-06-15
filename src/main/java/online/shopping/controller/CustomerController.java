@@ -26,7 +26,7 @@ public class CustomerController {
 	
 	@RequestMapping("/customer/{id}")
 	public Customer getCustomerById(@PathVariable("id") Long id) {
-		return this.customerRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Customer [ID:%d] Not Found", id)));
+		return this.customerRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Customer Not Found [ID:%d]", id)));
 	}
 	
 	@PostMapping("/customer/save") 

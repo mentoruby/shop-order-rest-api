@@ -1,5 +1,6 @@
 package online.shopping;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -40,13 +41,31 @@ public class OrderSampleStartupRunner implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		logger.debug("OrderSampleStartupRunner run method calling");
 		
+		insertSampleOrder1();
+		insertSampleOrder2();
+	}
+	
+	private void printOrderDetails(OrderSummary sampleOrderSummary) {
+		logger.info("Sample "+sampleOrderSummary);
+		for(Order order : sampleOrderSummary.getOrderList()) {
+			logger.info("Sample "+order);
+		}
+		List<OrderPromo> promoList = sampleOrderSummary.getPromoList();
+		if(promoList != null) {
+			for(OrderPromo promo : promoList) {
+				logger.info("Sample "+promo);
+			}
+		}
+	}
+	
+	private void insertSampleOrder1() {
 		Product apple = productRepository.queryFirstByName("Apple");
 		logger.info("Apple "+apple);
 		
 		Product orange = productRepository.queryFirstByName("Orange");
 		logger.info("Orange "+orange);
 		
-		Customer sampleCustomer = new Customer("Sample Customer");
+		Customer sampleCustomer = new Customer("Customer A");
 		sampleCustomer = customerRepository.save(sampleCustomer);
 		logger.info("Sample "+sampleCustomer);
 		
@@ -60,15 +79,25 @@ public class OrderSampleStartupRunner implements CommandLineRunner {
 		
 		sampleOrderSummary = orderSummaryRepository.save(sampleOrderSummary);
 		
-		logger.info("Sample "+sampleOrderSummary);
-		for(Order order : sampleOrderSummary.getOrderList()) {
-			logger.info("Sample "+order);
-		}
-		List<OrderPromo> promoList = sampleOrderSummary.getPromoList();
-		if(promoList != null) {
-			for(OrderPromo promo : promoList) {
-				logger.info("Sample "+promo);
-			}
-		}
+		printOrderDetails(sampleOrderSummary);
+	}
+	
+	private void insertSampleOrder2() {
+		Product banana = new Product("Banana", BigDecimal.valueOf(0.43));
+		banana = productRepository.save(banana);
+		logger.info("Banana "+banana);
+	
+		Customer sampleCustomer = customerRepository.findById(1L).get();
+		logger.info("Sample "+sampleCustomer);
+		
+		OrderSummary sampleOrderSummary = new OrderSummary(Timestamp.from(ZonedDateTime.now().toInstant()), sampleCustomer);
+		Order sampleOrder1 = new Order(banana, 5);
+		sampleOrderSummary.addOrder(sampleOrder1);
+		
+		orderCalculationService.updateCostAndDiscount(sampleOrderSummary);
+		
+		sampleOrderSummary = orderSummaryRepository.save(sampleOrderSummary);
+		
+		printOrderDetails(sampleOrderSummary);
 	}
 }
