@@ -39,6 +39,7 @@ CREATE TABLE ORDER_PROMO (
   id INT AUTO_INCREMENT PRIMARY KEY,
   promo_name VARCHAR(250) NOT NULL,
   order_summary_id INT NOT NULL,
+  quantity INT DEFAULT 0,
   discount DECIMAL DEFAULT 0,
   FOREIGN KEY (order_summary_id) references ORDER_SUMMARY(id)
 );

@@ -21,7 +21,7 @@ public class BuyOneGetOneFreePromoService extends PromotionServiceImpl {
 			
 			int discountedQuantity = Math.floorDiv(groupedOrder.getQuantity(), 2);
 			BigDecimal discount = product.getPrice().multiply(BigDecimal.valueOf(discountedQuantity));
-			return this.formOrderPromo(discountedQuantity, discount);
+			return new OrderPromo(this.promoName, discountedQuantity, discount);
 		}
 		return null;
 	}

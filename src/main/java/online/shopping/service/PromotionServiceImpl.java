@@ -1,11 +1,9 @@
 package online.shopping.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import online.shopping.entity.Order;
-import online.shopping.entity.OrderPromo;
 import online.shopping.entity.Product;
 
 public abstract class PromotionServiceImpl implements PromotionService {
@@ -15,11 +13,6 @@ public abstract class PromotionServiceImpl implements PromotionService {
 	public PromotionServiceImpl(String promoName, String productName) {
 		this.promoName = promoName;
 		this.productName = productName;
-	}
-	
-	protected OrderPromo formOrderPromo(int copies, BigDecimal discount) {
-		String newPromoName = this.promoName + String.format(" (x%d)", copies);
-		return new OrderPromo(newPromoName, discount);
 	}
 	
 	protected Order groupOrders(List<Order> orderList) {

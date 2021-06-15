@@ -2,6 +2,7 @@ package online.shopping;
 
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import online.shopping.entity.Customer;
 import online.shopping.entity.Order;
+import online.shopping.entity.OrderPromo;
 import online.shopping.entity.OrderSummary;
 import online.shopping.entity.Product;
 import online.shopping.service.CustomerRepository;
@@ -61,6 +63,12 @@ public class OrderSampleStartupRunner implements CommandLineRunner {
 		logger.info("Sample "+sampleOrderSummary);
 		for(Order order : sampleOrderSummary.getOrderList()) {
 			logger.info("Sample "+order);
+		}
+		List<OrderPromo> promoList = sampleOrderSummary.getPromoList();
+		if(promoList != null) {
+			for(OrderPromo promo : promoList) {
+				logger.info("Sample "+promo);
+			}
 		}
 	}
 }

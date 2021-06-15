@@ -30,20 +30,25 @@ public class OrderPromo {
 	private OrderSummary orderSummary;
 	
 	@Column
+	private int quantity;
+	
+	@Column
 	private BigDecimal discount;
 	
 	public OrderPromo() {
 		
 	}
 	
-	public OrderPromo(String promoName, BigDecimal discount) {
+	public OrderPromo(String promoName, int quantity, BigDecimal discount) {
 		this.promoName = promoName;
+		this.quantity = quantity;
 		this.discount = discount;
 	}
 	
-	public OrderPromo(Long id, String promoName, BigDecimal discount) {
+	public OrderPromo(Long id, String promoName, int quantity, BigDecimal discount) {
 		this.id = id;
 		this.promoName = promoName;
+		this.quantity = quantity;
 		this.discount = discount;
 	}
 	
@@ -72,6 +77,14 @@ public class OrderPromo {
 		this.orderSummary = orderSummary;
 	}
 
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
 	public BigDecimal getDiscount() {
 		return discount;
 	}
@@ -91,6 +104,7 @@ public class OrderPromo {
 		else {
 			sb.append(", orderSummary=null");
 		}
+		sb.append(", quantity=").append(quantity);
 		sb.append(", discount=").append(discount);
 		sb.append("]");
 		return sb.toString();

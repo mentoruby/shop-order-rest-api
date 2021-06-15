@@ -12,10 +12,6 @@ public class BuyThreeForTwoPromoService extends PromotionServiceImpl {
 	public BuyThreeForTwoPromoService(String productName) {
 		super(String.format("Buy 3 For 2 on %s", productName), productName);
 	}
-	
-	protected OrderPromo formOrderPromo(BigDecimal discount) {
-		return new OrderPromo(this.promoName, discount);
-	}
 
 	@Override
 	public OrderPromo findOrderPromo(List<Order> orderList) {
@@ -25,7 +21,7 @@ public class BuyThreeForTwoPromoService extends PromotionServiceImpl {
 			
 			int discountedQuantity = Math.floorDiv(groupedOrder.getQuantity(), 3);
 			BigDecimal discount = product.getPrice().multiply(BigDecimal.valueOf(discountedQuantity));
-			return this.formOrderPromo(discountedQuantity, discount);
+			return new OrderPromo(this.promoName, discountedQuantity, discount);
 		}
 		return null;
 	}
