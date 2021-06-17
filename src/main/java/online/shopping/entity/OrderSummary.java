@@ -151,23 +151,38 @@ public class OrderSummary {
 	}
 	
 	public BigDecimal calculateOriginalCost() {
-		BigDecimal cost = BigDecimal.ZERO;
+		originalCost = BigDecimal.ZERO;
 		if(this.orderList != null) {
 			for(Order order : this.orderList) {
-				cost = cost.add(order.calculateCost());
+				originalCost = originalCost.add(order.calculateCost());
 			}
 		}
-		return cost;
+		return originalCost;
 	}
 	
 	public BigDecimal calculateFinalDiscount() {
-		BigDecimal discount = BigDecimal.ZERO;
+		finalDiscount = BigDecimal.ZERO;
 		if(this.promoList != null) {
 			for(OrderPromo promo : this.promoList) {
-				discount = discount.add(promo.getDiscount());
+				finalDiscount = finalDiscount.add(promo.getDiscount());
 			}
 		}
-		return discount;
+		return finalDiscount;
+	}
+	
+	public BigDecimal calculateFinalCost() {
+		finalCost = BigDecimal.ZERO;
+		if(originalCost == null) {
+			originalCost = BigDecimal.ZERO;
+		}
+		if(finalDiscount == null) {
+			finalDiscount = BigDecimal.ZERO;
+		}
+		finalCost = originalCost.add(finalDiscount.negate());
+		if(finalCost.compareTo(BigDecimal.ZERO) < 0) {
+			finalCost = BigDecimal.ZERO;
+		}
+		return this.finalCost;
 	}
 
 	@Override

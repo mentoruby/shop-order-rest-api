@@ -1,6 +1,5 @@
 package online.shopping.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,21 +19,12 @@ public class OrderCalculationService {
 		promoServices.add(new BuyThreeForTwoPromoService("Orange"));
 	}
 	
-	public void updateCostAndDiscount(OrderSummary orderSummary) {
-		List<Order> orderList = orderSummary.getOrderList();
+	public void updateCostAndDiscount(OrderSummary orderSummary) {	
+		orderSummary.calculateOriginalCost();
 		
-		BigDecimal originalCost = orderSummary.calculateOriginalCost();
-		orderSummary.setOriginalCost(originalCost);
+		orderSummary.calculateFinalDiscount();
 		
-		BigDecimal finalDiscount = orderSummary.calculateFinalDiscount();
-		orderSummary.setFinalDiscount(finalDiscount);
-		
-		BigDecimal finalCost = originalCost.add(finalDiscount.negate());
-		if(finalCost.compareTo(BigDecimal.ZERO) < 0) {
-			orderSummary.setFinalCost(BigDecimal.ZERO);
-		} else {
-			orderSummary.setFinalCost(finalCost);
-		}
+		orderSummary.calculateFinalCost();
 	}
 	
 	public void applyOrderPromotion(OrderSummary orderSummary) {
