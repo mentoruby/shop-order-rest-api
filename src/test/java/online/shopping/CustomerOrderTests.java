@@ -26,7 +26,7 @@ public class CustomerOrderTests {
     	.andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
     	.andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(Matchers.greaterThan(0)))
     	.andExpect(MockMvcResultMatchers.jsonPath("$[*].id").isNotEmpty())
-    	.andExpect(MockMvcResultMatchers.jsonPath("$[*].customer.id").value(1))
+    	.andExpect(MockMvcResultMatchers.jsonPath("$[*].customer.id").value(Matchers.everyItem(Matchers.is(1))))
     	.andExpect(MockMvcResultMatchers.jsonPath("$[*].orderList[*].id").isNotEmpty())
     	;
     }
