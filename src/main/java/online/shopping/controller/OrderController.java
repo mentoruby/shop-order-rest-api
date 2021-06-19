@@ -56,8 +56,7 @@ public class OrderController {
 		return this.orderSummaryRespository.findByCustomerId(id);
 	}
 	
-	@PostMapping("/order/save")
-	public OrderSummary saveOrders(@RequestBody OrderSummary orderSummary) {
+	private OrderSummary saveOrders(@RequestBody OrderSummary orderSummary, boolean calculatePromotion) {
 		List<Order> orderList = orderSummary.getOrderList();
 		if(orderList == null || orderList.isEmpty()) {
 			throw new NotFoundException("Product Not Found In This Order!");
@@ -78,8 +77,13 @@ public class OrderController {
 		// refresh product data by product id
 		productCalculationService.refreshProductDetails(orderList);
 		
-		// calculate cost and discount
-		orderCalculationService.calculateCostAndDiscount(orderSummary);
+		if(calculatePromotion) {
+			// calculate order promotion, cost and discount
+			orderCalculationService.applyOrderPromotion(orderSummary);
+		} else {
+			// calculate cost and discount only
+			orderCalculationService.calculateCostAndDiscount(orderSummary);
+		}
 		
 		// Product object is not cascade-saved, and it is not refreshed after save 
 		this.orderSummaryRespository.save(orderSummary);
@@ -87,15 +91,13 @@ public class OrderController {
 		return orderSummary;
 	}
 	
+	@PostMapping("/order/save")
+	public OrderSummary saveOrders(@RequestBody OrderSummary orderSummary) {
+		return this.saveOrders(orderSummary, false);
+	}
+	
 	@PostMapping("/order/promo/save")
 	public OrderSummary saveOrdersWithPromotion(@RequestBody OrderSummary orderSummary) {
-		List<Order> orderList = orderSummary.getOrderList();
-		if(orderList == null || orderList.isEmpty()) {
-			throw new NotFoundException("Product Not Found In This Order!");
-		}
-		
-		orderCalculationService.applyOrderPromotion(orderSummary);
-		
-		return this.orderSummaryRespository.save(orderSummary);
+		return this.saveOrders(orderSummary, true);
 	}
 }

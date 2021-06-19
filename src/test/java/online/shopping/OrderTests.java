@@ -2,7 +2,6 @@ package online.shopping;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 
@@ -60,7 +59,7 @@ public class OrderTests {
 	@Test
 	public void saveSingleOrder() throws Exception {
 		
-		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25), 30);
+		Product orange = new Product(2L, "Orange");
 		Customer customer = new Customer(1L, "Customer A");
 		
 		OrderSummary orderSummary = new OrderSummary(Timestamp.from(ZonedDateTime.now().toInstant()), customer);
@@ -85,35 +84,10 @@ public class OrderTests {
 	}
 	
 	@Test
-	public void saveOutOfStockOrder() throws Exception {
-		
-		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.25), 10);
-		Customer customer = new Customer(1L, "Customer A");
-		
-		OrderSummary orderSummary = new OrderSummary(Timestamp.from(ZonedDateTime.now().toInstant()), customer);
-		Order appleOrder = new Order(apple, 3);
-		orderSummary.addOrder(appleOrder);
-		
-		String testContent = new ObjectMapper().writeValueAsString(orderSummary);
-		
-		mvc.perform(MockMvcRequestBuilders.post("/order/save")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(testContent)
-		.accept(MediaType.APPLICATION_JSON))
-		.andExpect(MockMvcResultMatchers.status().isBadRequest())
-		.andDo(MockMvcResultHandlers.print())
-		.andExpect(mvcResult -> {
-			assertTrue(mvcResult.getResolvedException() instanceof OutOfStockException);
-			assertTrue(mvcResult.getResolvedException().getMessage().startsWith("Product Is Out Of Stock"));
-		});
-		;
-	}
-	
-	@Test
 	public void saveMultiOrders() throws Exception {
 		
-		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25), 30);
-		Product banana = new Product(3L, "Banana", BigDecimal.valueOf(0.43), 50);
+		Product orange = new Product(2L, "Orange");
+		Product banana = new Product(3L, "Banana");
 		Customer customer = new Customer(1L, "Customer A");
 		
 		OrderSummary orderSummary = new OrderSummary(Timestamp.from(ZonedDateTime.now().toInstant()), customer);
@@ -177,4 +151,29 @@ public class OrderTests {
 		});
     	;
     }
+	
+	@Test
+	public void saveOutOfStockOrder() throws Exception {
+		
+		Product banana = new Product(1L, "Banana");
+		Customer customer = new Customer(1L, "Customer A");
+		
+		OrderSummary orderSummary = new OrderSummary(Timestamp.from(ZonedDateTime.now().toInstant()), customer);
+		Order bananaOrder = new Order(banana, 999999);
+		orderSummary.addOrder(bananaOrder);
+		
+		String testContent = new ObjectMapper().writeValueAsString(orderSummary);
+		
+		mvc.perform(MockMvcRequestBuilders.post("/order/save")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(testContent)
+		.accept(MediaType.APPLICATION_JSON))
+		.andExpect(MockMvcResultMatchers.status().isBadRequest())
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(mvcResult -> {
+			assertTrue(mvcResult.getResolvedException() instanceof OutOfStockException);
+			assertTrue(mvcResult.getResolvedException().getMessage().startsWith("Product Is Out Of Stock"));
+		});
+		;
+	}
 }

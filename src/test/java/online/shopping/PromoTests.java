@@ -1,6 +1,5 @@
 package online.shopping;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 
@@ -30,9 +29,9 @@ public class PromoTests {
 	@Test
 	public void applyNoPromotion() throws Exception {
 		
-		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.6), 10);
+		Product apple = new Product(1L, "Apple");
 		
-		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25), 30);
+		Product orange = new Product(2L, "Orange");
 		
 		Customer customer = new Customer(1L, "Customer A");
 		
@@ -60,9 +59,9 @@ public class PromoTests {
 	@Test
 	public void applySinglePromotion() throws Exception {
 		
-		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.6), 10);
+		Product apple = new Product(1L, "Apple");
 		
-		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25), 30);
+		Product orange = new Product(2L, "Orange");
 		
 		Customer customer = new Customer(1L, "Customer A");
 		
@@ -94,9 +93,9 @@ public class PromoTests {
 	@Test
 	public void applyMultiPromotions() throws Exception {
 		
-		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.6), 10);
+		Product apple = new Product(1L, "Apple");
 		
-		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25), 30);
+		Product orange = new Product(2L, "Orange");
 		
 		Customer customer = new Customer(1L, "Customer A");
 		
