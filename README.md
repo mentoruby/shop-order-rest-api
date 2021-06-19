@@ -6,7 +6,7 @@ A RESTful web service allows customers to shop and place orders online.
 * Product Creation & Enquiry
 * Order Creation & Enquiry
 
-## Skeleton Setup created by [Spring Initializr](#https://start.spring.io/)
+## Project Skeleton created by Spring Initializr
 * Spring Boot v2.5.1
 * Apache Maven v4.0.0
 * Java v11
@@ -40,32 +40,44 @@ H2 Database Console can be access by <http://localhost:8080/h2><br/>
 ![Order Summary Table](./info/table_order_summary.png)
 ![Order Promotion Table](./info/table_order_promo.png)
 
-## Request Links and Unit Test Case Names
+## Service Links and Names of Test Cases
+All test classes are implemented under `src/test/java/online/shopping`<br>
+
 ### GET
-* http://localhost:8080/products<br>
+* List All Products<br>
+http://localhost:8080/products<br>
 (ProductTests#getAllProductsAPI)
-* http://localhost:8080/product/{id}<br>
+* Get Details of a Product<br>
+http://localhost:8080/product/{id}<br>
 (ProductTests#getProductByIdAPI)
-* http://localhost:8080/customers
-* http://localhost:8080/customer/{id}
-* http://localhost:8080/customer/{id}/orders<br>
+* List All Customers<br>
+http://localhost:8080/customers
+* Get Details of a Customer<br>
+http://localhost:8080/customer/{id}
+* List All Orders of a Customer<br>
+http://localhost:8080/customer/{id}/orders<br>
 (CustomerOrderTests#getOrdersOfSingleCustomer, CustomerOrderTests#getOrdersOfNotExistCustomer)
-* http://localhost:8080/orders<br>
+* List All Orders<br>
+http://localhost:8080/orders<br>
 (OrderTests#getAllOrders)
-* http://localhost:8080/order/{id}<br>
+* Get Details of an Order<br>
+http://localhost:8080/order/{id}<br>
 (OrderTests#getSingleOrder, OrderTests#getNotExistOrder)
 
 ### POST
-* http://localhost:8080/customer/save
-* http://localhost:8080/product/save<br>
+* Save a Customer<br>
+http://localhost:8080/customer/save
+* Save a Product<br>
+http://localhost:8080/product/save<br>
 (ProductTests#saveProduct)
-* http://localhost:8080/order/save<br>
-(OrderTests#saveNoOrder, OrderTests#saveSingleOrder, OrderTests#saveMultiOrders)
-* http://localhost:8080/order/promo/save<br>
+* Save an Order without Promotion Applied<br>
+http://localhost:8080/order/save<br>
+(OrderTests#saveNoOrder, OrderTests#saveSingleOrder, OrderTests#saveOutOfStockOrder, OrderTests#saveMultiOrders)
+* Save an Order with Promotion Applied<br>
+http://localhost:8080/order/promo/save<br>
 (PromoTests#applyNoPromotion, PromoTests#applySinglePromotion, PromoTests#applyMultiPromotions, )
 
 ## Run Unit Tests with Maven
-All test classes are implemented under `src/test/java/online/shopping`<br>
 Run any of below commands in the `root folder where pom.xml exists`<br>
 
 Run all tests
@@ -78,7 +90,7 @@ Run a single test class
 mvn -Dtest=ProductTests test
 ```
 
-Run a multiple test classes
+Run multiple test classes
 ```bash
 mvn -Dtest=ProductTests,OrderTests test
 ```
