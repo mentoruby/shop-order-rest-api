@@ -11,6 +11,7 @@ import online.shopping.entity.OrderSummary;
 
 @Service
 public class OrderCalculationService {
+	
 	private List<PromotionService> promoServices;
 	
 	public OrderCalculationService() {
@@ -19,7 +20,7 @@ public class OrderCalculationService {
 		promoServices.add(new BuyThreeForTwoPromoService("Orange"));
 	}
 	
-	public void updateCostAndDiscount(OrderSummary orderSummary) {	
+	public void calculateCostAndDiscount(OrderSummary orderSummary) {
 		orderSummary.calculateOriginalCost();
 		
 		orderSummary.calculateFinalDiscount();
@@ -32,7 +33,7 @@ public class OrderCalculationService {
 		
 		// no promotion
 		if(orderList == null || orderList.isEmpty()) {
-			updateCostAndDiscount(orderSummary);
+			calculateCostAndDiscount(orderSummary);
 			return;
 		}
 		
@@ -47,6 +48,6 @@ public class OrderCalculationService {
 			}
 		}
 		
-		updateCostAndDiscount(orderSummary);
+		calculateCostAndDiscount(orderSummary);
 	}
 }

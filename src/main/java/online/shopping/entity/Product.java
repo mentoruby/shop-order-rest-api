@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class Product {
@@ -20,6 +21,12 @@ public class Product {
 	@Column
 	private BigDecimal price;
 	
+	@Column
+	private int quantity;
+	
+	@Transient
+	private ProductInventory inventory;
+	
 	public Product() {
 		
 	}
@@ -28,15 +35,17 @@ public class Product {
 		this.name = name;
 	}
 	
-	public Product(String name, BigDecimal price) {
+	public Product(String name, BigDecimal price, int quantity) {
 		this.name = name;
 		this.price = price;
+		this.quantity = quantity;
 	}
 	
-	public Product(Long id, String name, BigDecimal price) {
+	public Product(Long id, String name, BigDecimal price, int quantity) {
 		this.id = id;
 		this.name = name;
 		this.price = price;
+		this.quantity = quantity;
 	}
 
 	public Long getId() {
@@ -63,8 +72,24 @@ public class Product {
 		this.price = price;
 	}
 
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	public ProductInventory getInventory() {
+		return inventory;
+	}
+
+	public void setInventory(ProductInventory inventory) {
+		this.inventory = inventory;
+	}
+
 	@Override
 	public String toString() {
-		return "Product [id=" + id + ", name=" + name + ", price=" + price + "]";
+		return "Product [id=" + id + ", name=" + name + ", price=" + price + ", quantity=" + quantity + "]";
 	}
 }

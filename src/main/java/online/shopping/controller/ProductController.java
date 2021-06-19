@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import online.shopping.entity.Product;
 import online.shopping.exception.NotFoundException;
+import online.shopping.service.ProductCalculationService;
 import online.shopping.service.ProductRepository;
 
 @RestController
@@ -19,9 +20,17 @@ public class ProductController {
 	@Autowired
 	private ProductRepository productRepository;
 	
+	@Autowired
+	private ProductCalculationService productCalculationService;
+	
 	@RequestMapping("/products")
 	public List<Product> list() {
 		return this.productRepository.findAll();
+	}
+	
+	@RequestMapping("/products/inventory")
+	public List<Product> listInventory() {
+		return this.productCalculationService.listInventory();
 	}
 	
 	@RequestMapping("/product/{id}")

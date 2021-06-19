@@ -30,9 +30,9 @@ public class PromoTests {
 	@Test
 	public void applyNoPromotion() throws Exception {
 		
-		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.6));
+		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.6), 10);
 		
-		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25));
+		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25), 30);
 		
 		Customer customer = new Customer(1L, "Customer A");
 		
@@ -60,9 +60,9 @@ public class PromoTests {
 	@Test
 	public void applySinglePromotion() throws Exception {
 		
-		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.6));
+		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.6), 10);
 		
-		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25));
+		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25), 30);
 		
 		Customer customer = new Customer(1L, "Customer A");
 		
@@ -94,9 +94,9 @@ public class PromoTests {
 	@Test
 	public void applyMultiPromotions() throws Exception {
 		
-		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.6));
+		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.6), 10);
 		
-		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25));
+		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25), 30);
 		
 		Customer customer = new Customer(1L, "Customer A");
 		

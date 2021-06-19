@@ -1,6 +1,5 @@
 package online.shopping;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -22,6 +21,7 @@ import online.shopping.service.OrderSummaryRepository;
 import online.shopping.service.ProductRepository;
 
 @Component
+@org.springframework.core.annotation.Order(2)
 public class OrderSampleStartupRunner implements CommandLineRunner {
 	protected final Log logger = LogFactory.getLog(getClass());
 		
@@ -83,10 +83,9 @@ public class OrderSampleStartupRunner implements CommandLineRunner {
 	}
 	
 	private void insertSampleOrder2() {
-		Product banana = new Product("Banana", BigDecimal.valueOf(0.43));
-		banana = productRepository.save(banana);
+		Product banana = productRepository.queryFirstByName("Banana");
 		logger.info("Banana "+banana);
-	
+		
 		Customer sampleCustomer = customerRepository.findById(1L).get();
 		logger.info("Sample "+sampleCustomer);
 		
@@ -94,7 +93,7 @@ public class OrderSampleStartupRunner implements CommandLineRunner {
 		Order sampleOrder1 = new Order(banana, 5);
 		sampleOrderSummary.addOrder(sampleOrder1);
 		
-		orderCalculationService.updateCostAndDiscount(sampleOrderSummary);
+		orderCalculationService.calculateCostAndDiscount(sampleOrderSummary);
 		
 		sampleOrderSummary = orderSummaryRepository.save(sampleOrderSummary);
 		

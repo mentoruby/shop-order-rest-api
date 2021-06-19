@@ -24,9 +24,11 @@ public class Order {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@OneToOne
-    @JoinColumn(name = "product_id")
+    
+    @OneToOne
+    @JoinColumn(name = "product_id", nullable = false)
+	// By default no operations are cascaded for one-to-one mapping
+	// so product data is not created/updated during Order saving
 	private Product product;
 	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)

@@ -26,6 +26,7 @@ import online.shopping.entity.Order;
 import online.shopping.entity.OrderSummary;
 import online.shopping.entity.Product;
 import online.shopping.exception.NotFoundException;
+import online.shopping.exception.OutOfStockException;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -59,7 +60,7 @@ public class OrderTests {
 	@Test
 	public void saveSingleOrder() throws Exception {
 		
-		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25));
+		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25), 30);
 		Customer customer = new Customer(1L, "Customer A");
 		
 		OrderSummary orderSummary = new OrderSummary(Timestamp.from(ZonedDateTime.now().toInstant()), customer);
@@ -84,17 +85,42 @@ public class OrderTests {
 	}
 	
 	@Test
-	public void saveMultiOrders() throws Exception {
+	public void saveOutOfStockOrder() throws Exception {
 		
-		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.6));
-		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25));
+		Product apple = new Product(1L, "Apple", BigDecimal.valueOf(0.25), 10);
 		Customer customer = new Customer(1L, "Customer A");
 		
 		OrderSummary orderSummary = new OrderSummary(Timestamp.from(ZonedDateTime.now().toInstant()), customer);
-		Order appleOrder = new Order(apple, 10);
-		Order orangeOrder = new Order(orange, 20);
+		Order appleOrder = new Order(apple, 3);
 		orderSummary.addOrder(appleOrder);
+		
+		String testContent = new ObjectMapper().writeValueAsString(orderSummary);
+		
+		mvc.perform(MockMvcRequestBuilders.post("/order/save")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(testContent)
+		.accept(MediaType.APPLICATION_JSON))
+		.andExpect(MockMvcResultMatchers.status().isBadRequest())
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(mvcResult -> {
+			assertTrue(mvcResult.getResolvedException() instanceof OutOfStockException);
+			assertTrue(mvcResult.getResolvedException().getMessage().startsWith("Product Is Out Of Stock"));
+		});
+		;
+	}
+	
+	@Test
+	public void saveMultiOrders() throws Exception {
+		
+		Product orange = new Product(2L, "Orange", BigDecimal.valueOf(0.25), 30);
+		Product banana = new Product(3L, "Banana", BigDecimal.valueOf(0.43), 50);
+		Customer customer = new Customer(1L, "Customer A");
+		
+		OrderSummary orderSummary = new OrderSummary(Timestamp.from(ZonedDateTime.now().toInstant()), customer);
+		Order orangeOrder = new Order(orange, 2);
+		Order bananaOrder = new Order(banana, 10);
 		orderSummary.addOrder(orangeOrder);
+		orderSummary.addOrder(bananaOrder);
 		
 		String testContent = new ObjectMapper().writeValueAsString(orderSummary);
 		
@@ -107,9 +133,9 @@ public class OrderTests {
 		.andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.orderList.length()").value(2))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.orderList[0].id").isNotEmpty())
-		.andExpect(MockMvcResultMatchers.jsonPath("$.originalCost").value(11))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.originalCost").value(4))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.finalDiscount").value(0))
-		.andExpect(MockMvcResultMatchers.jsonPath("$.finalCost").value(11))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.finalCost").value(4))
 		;
 	}
     
